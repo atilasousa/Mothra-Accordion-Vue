@@ -11,19 +11,19 @@ const handleConfirm = () => alert("confirmado");
 
 <template>
   <div class="card">
-    <m-accordion title="Título" @confirm="handleConfirm" showActionsButton>
+    <m-accordion
+      v-for="i in 3"
+      :key="i"
+      title="Título"
+      @confirm="handleConfirm"
+      borderRadius="1rem"
+      showActionsButton
+    >
       Lorem ipsum dolor sit amet consectetur, adipisicing elit. Beatae, ex?
       Reiciendis atque officiis nesciunt. Tempora reiciendis cumque earum quo
       voluptate, nam illum provident aspernatur saepe vitae expedita iusto
       officiis iste?
     </m-accordion>
-    <m-accordion title="Título" :content="content">
-      Lorem ipsum dolor sit amet consectetur, adipisicing elit. Beatae, ex?
-      Reiciendis atque officiis nesciunt. Tempora reiciendis cumque earum quo
-      voluptate, nam illum provident aspernatur saepe vitae expedita iusto
-      officiis iste?</m-accordion
-    >
-    <m-accordion title="Título" :content="content" />
   </div>
 </template>
 

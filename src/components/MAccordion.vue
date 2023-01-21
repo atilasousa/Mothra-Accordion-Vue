@@ -13,7 +13,7 @@
           <button @click="handleToggle" class="btn">
             {{ cancelBtnText }}
           </button>
-          <button @click="$emit('confirm')" class="btn">
+          <button @click="emitConfirm" class="btn">
             {{ confirmBtnText }}
           </button>
         </div>
@@ -26,16 +26,22 @@ import { ref, computed } from "vue";
 import bem from "bem-ts";
 
 const mAccordionClass = bem("m-accordion", { strict: false });
-withDefaults(
+
+const $emit = defineEmits<{
+  (e: "confirm"): void;
+}>();
+
+const props = withDefaults(
   defineProps<{
-    content?: string;
     title: string;
     headerBackground?: string;
     contentBackground?: string;
     cancelBtnText?: string;
     confirmBtnText?: string;
     confirmBtnColor?: string;
+    btnRadius?: string;
     showActionsButton?: boolean;
+    borderRadius?: string;
   }>(),
   {
     cancelBtnText: "Cancel",
@@ -44,6 +50,8 @@ withDefaults(
     contentBackground: "white",
     confirmBtnColor: "#2a9d8f",
     showActionsButton: false,
+    borderRadius: "1rem",
+    btnRadius: "1rem",
   }
 );
 
@@ -53,9 +61,20 @@ const handleToggle = () => {
   showContent.value = !showContent.value;
 };
 
-const borderRadius = computed(() =>
-  !showContent.value ? "1rem" : "1rem 1rem 0 0"
+const borderRdHeader = computed(() =>
+  !showContent.value
+    ? `${props.borderRadius}`
+    : `${props.borderRadius} ${props.borderRadius} 0 0`
 );
+
+const borderRdContent = computed(
+  () => `0 0 ${props.borderRadius} ${props.borderRadius} `
+);
+
+const emitConfirm = () => {
+  $emit("confirm");
+  handleToggle();
+};
 
 const iconType = computed(() => (showContent.value ? "minus" : "plus"));
 </script>
@@ -65,13 +84,23 @@ const iconType = computed(() => (showContent.value ? "minus" : "plus"));
   width: 100%;
   display: flex;
   flex-direction: column;
-  margin-bottom: 1rem;
+  margin-bottom: 0.5rem;
+
+  &:last-child {
+    border-bottom: none;
+
+    .m-accordion {
+      &__header {
+        border-bottom: none;
+      }
+    }
+  }
 
   &__header {
     text-align: left;
     padding: 0 1rem;
     font-size: 0.7rem;
-    border-radius: v-bind(borderRadius);
+    border-radius: v-bind(borderRdHeader);
     display: inline-flex;
     justify-content: space-between;
     align-items: center;
@@ -97,7 +126,7 @@ const iconType = computed(() => (showContent.value ? "minus" : "plus"));
   &__content {
     padding: 1rem;
     text-align: left;
-    border-radius: 0 0 1rem 1rem;
+    border-radius: v-bind(borderRdContent);
     overflow-wrap: break-word;
     background-color: v-bind(contentBackground);
     color: #444444;
@@ -112,7 +141,7 @@ const iconType = computed(() => (showContent.value ? "minus" : "plus"));
 
     button {
       padding: 0.6rem;
-      border-radius: 0.7rem;
+      border-radius: v-bind(btnRadius);
       font-size: 0.9rem;
       font-weight: 500;
       border: none;
